@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Advanced Scientific Calculator</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(135deg,#1e3c72,#2a5298);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.calculator{
+background:#0f0f0f;
+padding:20px;
+border-radius:15px;
+width:500px;
+box-shadow:0 15px 40px rgba(0,0,0,0.6);
+}
+
+.display{
+background:#1a1a1a;
+border-radius:10px;
+padding:10px;
+margin-bottom:10px;
+}
+
+#display{
+width:100%;
+font-size:28px;
+border:none;
+background:none;
+color:white;
+text-align:right;
+outline:none;
+}
+
+#result{
+color:#aaa;
+text-align:right;
+overflow-x:auto;
+font-size:18px;
+}
+
+.history-controls{
+display:flex;
+gap:10px;
+margin-bottom:10px;
+}
+
+.history-controls button{
+flex:1;
+padding:8px;
+background:#444;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+#historyPanel{
+max-height:150px;
+overflow-y:auto;
+background:#1a1a1a;
+border-radius:8px;
+padding:8px;
+display:none;
+margin-bottom:10px;
+}
+
+.history-item{
+padding:6px;
+border-bottom:1px solid #333;
+cursor:pointer;
+color:white;
+font-size:14px;
+}
+
+.history-item:hover{
+background:#333;
+}
+
+.buttons{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:7px;
+}
+
+button{
+padding:11px;
+font-size:13px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#2a2a2a;
+color:white;
+}
+
+button:hover{background:#444}
+
+.operator{background:#ff9500}
+.equal{background:#00c853}
+.clear{background:#e53935}
+
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+<div class="display">
+<input id="display" readonly>
+<div id="result"></div>
+</div>
+
+<div class="history-controls">
+<button onclick="toggleHistory()">History</button>
+<button onclick="clearHistory()">Clear History</button>
+</div>
+
+<div id="historyPanel"></div>
+
+<div class="buttons">
+
+<button onclick="clearDisplay()" class="clear">C</button>
+<button onclick="append('(')">(</button>
+<button onclick="append(')')">)</button>
+<button onclick="append('/')">÷</button>
+<button onclick="sqrt()">√</button>
+<button onclick="power()">xʸ</button>
+<button onclick="yroot()">y√x</button>
+
+<button onclick="append('7')">7</button>
+<button onclick="append('8')">8</button>
+<button onclick="append('9')">9</button>
+<button onclick="append('*')">×</button>
+<button onclick="square()">x²</button>
+<button onclick="cube()">x³</button>
+<button onclick="inv()">1/x</button>
+
+<button onclick="append('4')">4</button>
+<button onclick="append('5')">5</button>
+<button onclick="append('6')">6</button>
+<button onclick="append('-')">−</button>
+<button onclick="factorial()">x!</button>
+<button onclick="pi()">π</button>
+<button onclick="e()">e</button>
+
+<button onclick="append('1')">1</button>
+<button onclick="append('2')">2</button>
+<button onclick="append('3')">3</button>
+<button onclick="append('+')" class="operator">+</button>
+<button onclick="calculate()" class="equal">=</button>
+<button onclick="log()">log</button>
+<button onclick="ln()">ln</button>
+
+<button onclick="append('0')">0</button>
+<button onclick="append('.')">.</button>
+<button onclick="sin()">sin</button>
+<button onclick="cos()">cos</button>
+<button onclick="tan()">tan</button>
+<button onclick="sec()">sec</button>
+<button onclick="csc()">csc</button>
+
+<button onclick="cot()">cot</button>
+<button onclick="asin()">sin⁻¹</button>
+<button onclick="acos()">cos⁻¹</button>
+<button onclick="atan()">tan⁻¹</button>
+<button onclick="asec()">sec⁻¹</button>
+<button onclick="acsc()">csc⁻¹</button>
+<button onclick="acot()">cot⁻¹</button>
+
+<button onclick="sinh()">sinh</button>
+<button onclick="cosh()">cosh</button>
+<button onclick="tanh()">tanh</button>
+<button onclick="asinh()">sinh⁻¹</button>
+<button onclick="acosh()">cosh⁻¹</button>
+<button onclick="atanh()">tanh⁻¹</button>
+<button onclick="toggleMode()">DEG</button>
+
+</div>
+</div>
+
+<script>
+
+let display=document.getElementById("display")
+let result=document.getElementById("result")
+
+let degree=true
+let rootMode=false
+let rootX=0
+
+let historyList=[]
+
+function append(v){
+display.value+=v
+preview()
+}
+
+function clearDisplay(){
+display.value=""
+result.innerText=""
+}
+
+function preview(){
+try{
+result.innerText=eval(display.value)
+}catch{}
+}
+
+function calculate(){
+
+try{
+
+let expression=display.value
+let resultValue
+
+if(rootMode){
+let y=eval(display.value)
+resultValue=Math.pow(rootX,1/y)
+rootMode=false
+}else{
+resultValue=eval(expression)
+}
+
+display.value=resultValue
+result.innerText=""
+
+addHistory(expression,resultValue)
+
+}catch{
+display.value="Error"
+}
+
+}
+
+function addHistory(exp,res){
+
+let entry=exp+" = "+res
+historyList.push(entry)
+
+renderHistory()
+
+}
+
+function renderHistory(){
+
+let panel=document.getElementById("historyPanel")
+panel.innerHTML=""
+
+historyList.slice().reverse().forEach(item=>{
+
+let div=document.createElement("div")
+div.className="history-item"
+div.innerText=item
+
+div.onclick=()=>{
+display.value=item.split("=")[0].trim()
+}
+
+panel.appendChild(div)
+
+})
+
+}
+
+function toggleHistory(){
+
+let panel=document.getElementById("historyPanel")
+
+panel.style.display=panel.style.display==="none"?"block":"none"
+
+}
+
+function clearHistory(){
+
+historyList=[]
+renderHistory()
+
+}
+
+function sqrt(){display.value=Math.sqrt(eval(display.value))}
+function square(){display.value=Math.pow(eval(display.value),2)}
+function cube(){display.value=Math.pow(eval(display.value),3)}
+function power(){display.value+="**"}
+
+function yroot(){
+rootX=eval(display.value)
+display.value=""
+rootMode=true
+}
+
+function inv(){display.value=1/eval(display.value)}
+
+function factorial(){
+
+let n=eval(display.value)
+let f=1
+
+for(let i=1;i<=n;i++){
+f*=i
+}
+
+display.value=f
+
+}
+
+function toRad(v){return degree?v*Math.PI/180:v}
+function toDeg(v){return degree?v*180/Math.PI:v}
+
+function sin(){display.value=Math.sin(toRad(eval(display.value)))}
+function cos(){display.value=Math.cos(toRad(eval(display.value)))}
+function tan(){display.value=Math.tan(toRad(eval(display.value)))}
+
+function sec(){display.value=1/Math.cos(toRad(eval(display.value)))}
+function csc(){display.value=1/Math.sin(toRad(eval(display.value)))}
+function cot(){display.value=1/Math.tan(toRad(eval(display.value)))}
+
+function asin(){display.value=toDeg(Math.asin(eval(display.value)))}
+function acos(){display.value=toDeg(Math.acos(eval(display.value)))}
+function atan(){display.value=toDeg(Math.atan(eval(display.value)))}
+
+function asec(){display.value=toDeg(Math.acos(1/eval(display.value)))}
+function acsc(){display.value=toDeg(Math.asin(1/eval(display.value)))}
+function acot(){display.value=toDeg(Math.atan(1/eval(display.value)))}
+
+function sinh(){display.value=Math.sinh(eval(display.value))}
+function cosh(){display.value=Math.cosh(eval(display.value))}
+function tanh(){display.value=Math.tanh(eval(display.value))}
+
+function asinh(){display.value=Math.asinh(eval(display.value))}
+function acosh(){display.value=Math.acosh(eval(display.value))}
+function atanh(){display.value=Math.atanh(eval(display.value))}
+
+function log(){display.value=Math.log10(eval(display.value))}
+function ln(){display.value=Math.log(eval(display.value))}
+
+function pi(){display.value+=Math.PI}
+function e(){display.value+=Math.E}
+
+function toggleMode(){
+
+degree=!degree
+event.target.innerText=degree?"DEG":"RAD"
+
+}
+
+</script>
+
+</body>
+</html>
