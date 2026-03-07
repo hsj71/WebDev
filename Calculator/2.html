@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Advanced Scientific Calculator</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.calculator{
+    background:#0f0f0f;
+    padding:20px;
+    border-radius:15px;
+    width:420px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.6);
+}
+
+.display{
+    background:#1a1a1a;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:15px;
+}
+
+#display{
+    width:100%;
+    font-size:30px;
+    border:none;
+    background:none;
+    color:white;
+    text-align:right;
+    outline:none;
+}
+
+#result{
+    width:100%;
+    font-size:18px;
+    color:#aaa;
+    text-align:right;
+    overflow-x:auto;
+}
+
+.buttons{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+}
+
+button{
+    padding:14px;
+    font-size:14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#2a2a2a;
+    color:white;
+}
+
+button:hover{
+    background:#444;
+}
+
+.operator{ background:#ff9500; }
+.equal{ background:#00c853; }
+.clear{ background:#e53935; }
+
+.operator:hover{background:#ffa733;}
+.equal:hover{background:#1de96b;}
+.clear:hover{background:#ff5c5c;}
+
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+
+<div class="display">
+<input id="display" readonly>
+<div id="result"></div>
+</div>
+
+<div class="buttons">
+
+<button onclick="memoryClear()">MC</button>
+<button onclick="memoryRecall()">MR</button>
+<button onclick="memoryAdd()">M+</button>
+<button onclick="memorySub()">M-</button>
+<button onclick="toggleMode()">DEG</button>
+<button onclick="clearDisplay()" class="clear">C</button>
+
+<button onclick="append('7')">7</button>
+<button onclick="append('8')">8</button>
+<button onclick="append('9')">9</button>
+<button onclick="append('/')">÷</button>
+<button onclick="sqrt()">√</button>
+<button onclick="power()">xʸ</button>
+
+<button onclick="append('4')">4</button>
+<button onclick="append('5')">5</button>
+<button onclick="append('6')">6</button>
+<button onclick="append('*')">×</button>
+<button onclick="square()">x²</button>
+<button onclick="cube()">x³</button>
+
+<button onclick="append('1')">1</button>
+<button onclick="append('2')">2</button>
+<button onclick="append('3')">3</button>
+<button onclick="append('-')">−</button>
+<button onclick="inv()">1/x</button>
+<button onclick="factorial()">n!</button>
+
+<button onclick="append('0')">0</button>
+<button onclick="append('.')">.</button>
+<button onclick="append('+')" class="operator">+</button>
+<button onclick="calculate()" class="equal">=</button>
+<button onclick="pi()">π</button>
+<button onclick="e()">e</button>
+
+<button onclick="sin()">sin</button>
+<button onclick="cos()">cos</button>
+<button onclick="tan()">tan</button>
+<button onclick="log()">log</button>
+<button onclick="ln()">ln</button>
+<button onclick="exp()">EXP</button>
+
+</div>
+</div>
+
+<script>
+
+let display=document.getElementById("display");
+let result=document.getElementById("result");
+
+let memory=0;
+let degree=true;
+
+function append(v){
+display.value+=v;
+preview();
+}
+
+function clearDisplay(){
+display.value="";
+result.innerText="";
+}
+
+function calculate(){
+try{
+display.value=eval(display.value);
+result.innerText="";
+}catch{
+display.value="Error";
+}
+}
+
+function preview(){
+try{
+result.innerText=eval(display.value);
+}catch{}
+}
+
+function sqrt(){display.value=Math.sqrt(eval(display.value))}
+function square(){display.value=Math.pow(eval(display.value),2)}
+function cube(){display.value=Math.pow(eval(display.value),3)}
+function power(){display.value+="**"}
+
+function inv(){display.value=1/eval(display.value)}
+
+function factorial(){
+let n=eval(display.value)
+let f=1
+for(let i=1;i<=n;i++) f*=i
+display.value=f
+}
+
+function sin(){
+let v=eval(display.value)
+if(degree) v=v*Math.PI/180
+display.value=Math.sin(v)
+}
+
+function cos(){
+let v=eval(display.value)
+if(degree) v=v*Math.PI/180
+display.value=Math.cos(v)
+}
+
+function tan(){
+let v=eval(display.value)
+if(degree) v=v*Math.PI/180
+display.value=Math.tan(v)
+}
+
+function log(){display.value=Math.log10(eval(display.value))}
+function ln(){display.value=Math.log(eval(display.value))}
+function exp(){display.value=Math.exp(eval(display.value))}
+
+function pi(){display.value+=Math.PI}
+function e(){display.value+=Math.E}
+
+function toggleMode(){
+degree=!degree
+event.target.innerText=degree?"DEG":"RAD"
+}
+
+function memoryClear(){memory=0}
+function memoryRecall(){display.value+=memory}
+function memoryAdd(){memory+=eval(display.value)}
+function memorySub(){memory-=eval(display.value)}
+
+</script>
+
+</body>
+</html>
