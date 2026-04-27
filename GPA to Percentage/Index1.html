@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPPU CGPA Converter</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #fff;
+}
+
+.container {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  padding: 30px;
+  border-radius: 20px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #00c6ff;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.result {
+  margin-top: 20px;
+  text-align: left;
+  background: rgba(0,0,0,0.2);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.result p {
+  margin: 8px 0;
+}
+
+.footer {
+  margin-top: 15px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🎓 CGPA Converter</h1>
+
+  <input type="number" id="cgpa" placeholder="Enter CGPA (0 - 10)" step="0.01">
+  <button onclick="convert()">Convert</button>
+
+  <div class="result" id="result" style="display:none;">
+    <p><strong>Percentage:</strong> <span id="percentage"></span>%</p>
+    <p><strong>Grade:</strong> <span id="grade"></span></p>
+    <p><strong>Class:</strong> <span id="class"></span></p>
+  </div>
+
+  <div class="footer">SPPU Official Formula</div>
+</div>
+
+<script>
+function convert() {
+  let cgpa = parseFloat(document.getElementById("cgpa").value);
+
+  if (isNaN(cgpa) || cgpa < 4 || cgpa > 10) {
+    alert("Enter valid CGPA (4 - 10)");
+    return;
+  }
+
+  let percentage = 0;
+  let grade = "";
+  let degreeClass = "";
+
+  if (cgpa >= 9.5) {
+    percentage = 20 * cgpa - 100;
+    grade = "O";
+  } else if (cgpa >= 8.25) {
+    percentage = 12 * cgpa - 25;
+    grade = "A+";
+  } else if (cgpa >= 6.75) {
+    percentage = 10 * cgpa - 7.5;
+    grade = "A";
+  } else if (cgpa >= 5.75) {
+    percentage = 5 * cgpa + 26.25;
+    grade = "B+";
+  } else if (cgpa >= 5.25) {
+    percentage = 10 * cgpa - 2.5;
+    grade = "B";
+  } else if (cgpa >= 4.75) {
+    percentage = 10 * cgpa - 2.5;
+    grade = "C";
+  } else {
+    percentage = 6.6 * cgpa + 13.6;
+    grade = "D/P";
+  }
+
+  if (cgpa >= 7.75) degreeClass = "First Class With Distinction";
+  else if (cgpa >= 6.75) degreeClass = "First Class";
+  else if (cgpa >= 6.25) degreeClass = "Higher Second Class";
+  else if (cgpa >= 5.50) degreeClass = "Second Class";
+  else degreeClass = "Pass Class";
+
+  document.getElementById("percentage").innerText = percentage.toFixed(2);
+  document.getElementById("grade").innerText = grade;
+  document.getElementById("class").innerText = degreeClass;
+
+  document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>
